@@ -1,0 +1,72 @@
+﻿  Source.cpp
+D:\Project1\Project1\Source.cpp(12,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Project1\Project1\Source.cpp(31,92): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(31,53): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(54,71): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(54,41): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(64,64): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(64,39): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(75,65): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(75,39): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(96,52): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+D:\Project1\Project1\Source.cpp(97,51): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Project1\Project1\Source.cpp(108,63): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(112,96): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(112,56): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Project1\Project1\Source.cpp(125,21): warning C4018: '<': signed/unsigned mismatch
+D:\Project1\Project1\Source.cpp(141,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Project1\Project1\Source.cpp(144,21): warning C4018: '<': signed/unsigned mismatch
+D:\Project1\Project1\Source.cpp(157,21): warning C4018: '<': signed/unsigned mismatch
+D:\Project1\Project1\Source.cpp(171,21): warning C4018: '<': signed/unsigned mismatch
+D:\Project1\Project1\Source.cpp(173,22): warning C4018: '<': signed/unsigned mismatch
+D:\Project1\Project1\Source.cpp(195,21): warning C4018: '<': signed/unsigned mismatch
+D:\Project1\Project1\Source.cpp(199,21): warning C4018: '<': signed/unsigned mismatch
+  Project1.vcxproj -> D:\Project1\Debug\Project1.exe
