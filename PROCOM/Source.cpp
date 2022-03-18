@@ -155,6 +155,10 @@ int main()
 			{
 				enemies.erase(enemies.begin() + i);
 			}
+			if (enemies[i].getPosition().y > window.getSize().y)
+			{
+				hp = 0;
+			}
 		}
 		// collision
 		for (int i = 0; i < enemies.size(); i++)
