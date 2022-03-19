@@ -47,7 +47,7 @@ int main()
 	txt.setFont(font);
 	txt.setString("Game Over");
 	txt.setCharacterSize(30);
-	txt.setPosition(window.getSize().x / 2 - 80, window.getSize().y / 2 - 40);
+	txt.setPosition(window.getSize().x / 2 - 80, window.getSize().y / 2 - 150);
 	txt.setFillColor(sf::Color::White);
 	txt.setOutlineThickness(2);
 	txt.setOutlineColor(sf::Color::Red);
@@ -117,11 +117,11 @@ int main()
 			}
 		}
 		// Enemies
-		if (respawn < 20)
+		if (respawn < 40)
 		{
 			respawn++;
 		}
-		if (respawn >= 20)
+		if (respawn >= 40)
 		{
 			respawn = 0;
 			if (Power[powerCounter] == '1')
@@ -201,6 +201,7 @@ int main()
 					{
 						hit = 8;
 						kill = 4;
+
 					}
 					if (hitcount >= hit)
 					{
@@ -213,6 +214,7 @@ int main()
 				}
 			}
 		}
+
 
 		window.clear(sf::Color::Black);
 		window.draw(Back);
@@ -232,6 +234,10 @@ int main()
 		{
 			window.clear(sf::Color::Black);
 			window.draw(txt);
+			Score.setPosition(window.getSize().x / 2 - 50, window.getSize().y / 2);
+			Count.setPosition(window.getSize().x / 2 - 25, window.getSize().y / 2 + 50);
+			window.draw(Score);
+			window.draw(Count);
 		}
 		window.display();
 	}
