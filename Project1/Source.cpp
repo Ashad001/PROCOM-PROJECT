@@ -77,7 +77,11 @@ int main()
 	int shootCounter = 0;
 	int respawn = 0;
 	int hitcount = 0;
+	int hit = 0;
 	float enemy_pos_x = 0.f, enemy_pos_y = 0.f;
+	string Power = "111122323";
+	int powerCounter = 0;
+	int kill;
 	while (window.isOpen())
 	{
 		sf::Event evnt;
@@ -120,18 +124,45 @@ int main()
 		if (respawn >= 20)
 		{
 			respawn = 0;
-			enemy.setPosition((rand() % (int)(window.getSize().x - EnemySize.x * 2 - 250)), 0.0f);
-			enemy.setPosition(enemy_pos_x, enemy_pos_y);
+			if (Power[powerCounter] == '1')
+			{
+				enemy.setColor(sf::Color::Yellow);
+			}
+			else if (Power[powerCounter] == '2')
+			{
+				enemy.setColor(sf::Color::Green);
+			}
+			else if (Power[powerCounter] == '3')
+			{
+				enemy.setColor(sf::Color::Red);
+			}
+			powerCounter++;
+			if (powerCounter >= Power.size() - 1)
+			{
+				powerCounter = 0;
+			}
+			enemy.setPosition((rand() % (int)(window.getSize().x - EnemySize.x * 2 - 330)), 0.0f);
 			enemies.push_back(sf::Sprite(enemy));
 		}
 		for (int i = 0; i < enemies.size(); i++)
 		{
-			enemies[i].move(0.0f, 0.80f);
+			if (enemies[i].getColor() == sf::Color::Yellow)
+			{
+				enemies[i].move(0.0f, 0.8f);	
+			}
+			else if (enemies[i].getColor() == sf::Color::Green)
+			{
+				enemies[i].move(0.0f, 0.5f);
+			}
+			else if (enemies[i].getColor() == sf::Color::Red)
+			{
+				enemies[i].move(0.0f, 0.3f);
+			}
 			if (enemies[i].getPosition().y <= 0)
 			{
 				enemies.erase(enemies.begin() + i);
 			}
-			if (enemies[i].getPosition().y > window.getSize().y)
+			if (enemies[i].getPosition().y + 50 > window.getSize().y)
 			{
 				player.SetHP(0);
 			}
@@ -141,6 +172,7 @@ int main()
 		{
 			if (player.GetGlobalBounds().intersects(enemies[i].getGlobalBounds()))
 			{	
+				player.SetHP(player.GetHp() - 1);
 				enemies.erase(enemies.begin() + i);
 			}
 		}
@@ -155,9 +187,24 @@ int main()
 				if (enemies[i].getGlobalBounds().intersects(projectiles[j].BulletGlobalBounds()))
 				{
 					hitcount++;
-					if (hitcount >= 2)
+					if (enemies[i].getColor() == sf::Color::Yellow)
 					{
-						killCount++;
+						hit = 2;
+						kill = 1;
+					}
+					else if (enemies[i].getColor() == sf::Color::Green)
+					{
+						hit = 5;
+						kill = 2;
+					}
+					else if (enemies[i].getColor() == sf::Color::Red)
+					{
+						hit = 8;
+						kill = 4;
+					}
+					if (hitcount >= hit)
+					{
+						killCount+= kill;
 						enemies.erase(enemies.begin() + i);
 						hitcount = 0;
 					}
