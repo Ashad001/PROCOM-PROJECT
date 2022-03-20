@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include<vector>
+#include <iostream>
 #include "Bullet.h"
 #include "Player.h"
 #include <cstdlib>
@@ -20,6 +21,52 @@ int main()
 	sf::Sprite Back(Background);
 	Back.setScale(1.6f, 1.0f);
 
+	// DINESH WORK
+	sf::Texture Star01Pic;
+	if (!Star01Pic.loadFromFile("Star01.png"))
+	{
+		cout << "Error! unable to load background star" << endl;
+	}
+	sf::Clock clock01; // starts the clock
+	sf::Time elapsed1 = sf::seconds(1);
+	sf::Sprite Star01[10];
+	float deltaTime = 0.0f;
+
+	for (int i = 0; i < 10; i++)
+	{
+		Star01[i].setTexture(Star01Pic);
+		switch (i)
+		{
+		case 0:
+			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y);
+			Star01[i].setColor(sf::Color::Cyan);
+			break;
+		case 1:
+			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 5);
+			Star01[i].setColor(sf::Color::Red);
+			break;
+		case 2:
+			Star01[i].setPosition(rand() % window.getSize().x - 350,  window.getSize().y % 9);
+			Star01[i].setColor(sf::Color::Blue);
+			break;
+		case 3:
+			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 2);
+			Star01[i].setColor(sf::Color::Yellow);
+			break;
+		case 4:
+			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 2);
+			Star01[i].setColor(sf::Color::Green);
+			break;
+		default:
+			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 13);
+			Star01[i].setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+			break;
+		}
+	}
+
+
+
+
 	// Shoot
 	Bullet playerShoot(2, 20);
 	playerShoot.SetBulletColor(sf::Color::Red);
@@ -28,7 +75,7 @@ int main()
 	// The Plane
 	sf::Texture PlayerTexture;
 	PlayerTexture.loadFromFile("Plane3.png");
-	Player player(window,&PlayerTexture, 12);
+	Player player(window, &PlayerTexture, 12);
 
 
 	// Enemies 
@@ -38,7 +85,7 @@ int main()
 	sf::Vector2u EnemySize = EnemyTexture.getSize();
 	vector<sf::Sprite> enemies;
 
-	
+
 
 	// GameOver
 	sf::Font font;
@@ -57,7 +104,7 @@ int main()
 	Score.setFont(font);
 	Score.setString("SCORE");
 	Score.setCharacterSize(19);
-	Score.setPosition(window.getSize().x - 210,  200);
+	Score.setPosition(window.getSize().x - 210, 200);
 	Score.setFillColor(sf::Color::White);
 	Score.setOutlineThickness(3);
 	Score.setOutlineColor(sf::Color::Blue);
@@ -84,6 +131,27 @@ int main()
 	int kill;
 	while (window.isOpen())
 	{
+		deltaTime = clock01.restart().asMilliseconds();
+		// ALSO DINESH WORK
+		if (clock01.getElapsedTime().asMilliseconds() < elapsed1.asMilliseconds())
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if (Star01[i].getPosition().y != -64)
+				{
+					Star01[i].setPosition(Star01[i].getPosition().x, Star01[i].getPosition().y - 1);
+				}
+				else
+				{
+					Star01[i].setPosition(Star01[i].getPosition().x, window.getSize().y + rand() % window.getSize().y);
+				}
+			}
+		}
+		else
+		{
+			clock01.restart();
+		}
+
 		sf::Event evnt;
 		while (window.pollEvent(evnt))
 		{
@@ -95,12 +163,12 @@ int main()
 			{
 			}
 		}
-		player.MovePLayer(window);
-		if (shootCounter < 10)
+		player.MovePLayer(window, deltaTime);
+		if (shootCounter < 8)
 		{
 			shootCounter++;
 		}
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && shootCounter >= 10)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && shootCounter >= 8)
 		{
 			playerShoot.SetBulletPosition(player.GetPlayerCentre().x - 56.0f, player.GetPlayerCentre().y - 20.0f);
 			projectiles.push_back(Bullet(playerShoot));
@@ -117,11 +185,11 @@ int main()
 			}
 		}
 		// Enemies
-		if (respawn < 40)
+		if (respawn < 70)
 		{
 			respawn++;
 		}
-		if (respawn >= 40)
+		if (respawn >= 70)
 		{
 			respawn = 0;
 			if (Power[powerCounter] == '1')
@@ -148,7 +216,7 @@ int main()
 		{
 			if (enemies[i].getColor() == sf::Color::Yellow)
 			{
-				enemies[i].move(0.0f, 0.8f);	
+				enemies[i].move(0.0f, 0.8f);
 			}
 			else if (enemies[i].getColor() == sf::Color::Green)
 			{
@@ -171,7 +239,7 @@ int main()
 		for (int i = 0; i < enemies.size(); i++)
 		{
 			if (player.GetGlobalBounds().intersects(enemies[i].getGlobalBounds()))
-			{	
+			{
 				player.SetHP(player.GetHp() - 1);
 				enemies.erase(enemies.begin() + i);
 			}
@@ -205,7 +273,7 @@ int main()
 					}
 					if (hitcount >= hit)
 					{
-						killCount+= kill;
+						killCount += kill;
 						enemies.erase(enemies.begin() + i);
 						hitcount = 0;
 					}
@@ -238,6 +306,11 @@ int main()
 			Count.setPosition(window.getSize().x / 2 - 25, window.getSize().y / 2 + 50);
 			window.draw(Score);
 			window.draw(Count);
+		}
+		// GUESS WHAT IT'S ALSO DINESH WORK
+		for (int i = 0; i < 10; i++)
+		{
+			window.draw(Star01[i]);
 		}
 		window.display();
 	}
