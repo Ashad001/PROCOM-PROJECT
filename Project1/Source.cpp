@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include "Player.h"
 #include <cstdlib>
+#include "Animation.h"
 using namespace std;
 
 
@@ -18,18 +19,20 @@ int main()
 	// Background
 	sf::Texture Background;
 	Background.loadFromFile("Back.png");
-	sf::Sprite Back(Background);
-	Back.setScale(1.6f, 1.0f);
+	//sf::Sprite Back(Background);
+	//Back.setScale(1.6f, 1.0f);
 
 	// DINESH WORK
 	sf::Texture Star01Pic;
-	if (!Star01Pic.loadFromFile("Star01.png"))
+	if (!Star01Pic.loadFromFile("Meteors.png"))
 	{
 		cout << "Error! unable to load background star" << endl;
 	}
 	sf::Clock clock01; // starts the clock
 	sf::Time elapsed1 = sf::seconds(1);
 	sf::Sprite Star01[10];
+	Animation animation_meteors(&Star01Pic, sf::Vector2u(4, 1), 400);
+	
 	float deltaTime = 0.0f;
 
 	for (int i = 0; i < 10; i++)
@@ -39,27 +42,34 @@ int main()
 		{
 		case 0:
 			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y);
-			Star01[i].setColor(sf::Color::Cyan);
+			Star01[i].setColor(sf::Color(128,128,128));
+			Star01[i].setScale(1.5f, 1.5f);
 			break;
 		case 1:
 			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 5);
-			Star01[i].setColor(sf::Color::Red);
+			Star01[i].setColor(sf::Color(105, 105, 105));
+			Star01[i].setScale(3.f, 3.f);
 			break;
 		case 2:
 			Star01[i].setPosition(rand() % window.getSize().x - 350,  window.getSize().y % 9);
-			Star01[i].setColor(sf::Color::Blue);
+			Star01[i].setColor(sf::Color(105,105,105));
+			Star01[i].setScale(2,2);
+
 			break;
 		case 3:
 			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 2);
-			Star01[i].setColor(sf::Color::Yellow);
+			Star01[i].setColor(sf::Color(119,136,153));
+			Star01[i].setScale(1.4f, 1.4f);
 			break;
 		case 4:
 			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 2);
-			Star01[i].setColor(sf::Color::Green);
+			Star01[i].setColor(sf::Color(112,128,144));
+			Star01[i].setScale(4.f, 4.f);
+
 			break;
 		default:
 			Star01[i].setPosition(rand() % window.getSize().x - 350, window.getSize().y % 13);
-			Star01[i].setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+			Star01[i].setScale(1.f, 1.f);
 			break;
 		}
 	}
@@ -80,10 +90,12 @@ int main()
 
 	// Enemies 
 	sf::Texture EnemyTexture;
-	EnemyTexture.loadFromFile("Enemy.png");
+	EnemyTexture.loadFromFile("Enemy2.png");
 	sf::Sprite enemy(EnemyTexture);
 	sf::Vector2u EnemySize = EnemyTexture.getSize();
+	enemy.setScale(0.7f, 0.7f);
 	vector<sf::Sprite> enemies;
+	Animation animation_enemy(&EnemyTexture, sf::Vector2u(3,1), 300);
 
 
 
@@ -126,9 +138,12 @@ int main()
 	int hitcount = 0;
 	int hit = 0;
 	float enemy_pos_x = 0.f, enemy_pos_y = 0.f;
-	string Power = "111122323";
+	string Power = "11111222233";
 	int powerCounter = 0;
 	int kill;
+	int OverHeat = 0; // Yeah I am Evil ;)
+	bool Over = true;
+
 	while (window.isOpen())
 	{
 		deltaTime = clock01.restart().asMilliseconds();
@@ -143,7 +158,7 @@ int main()
 				}
 				else
 				{
-					Star01[i].setPosition(Star01[i].getPosition().x, window.getSize().y + rand() % window.getSize().y);
+					Star01[i].setPosition(Star01[i].getPosition().x, window.getSize().y + rand() % window.getSize().y );
 				}
 			}
 		}
@@ -168,7 +183,7 @@ int main()
 		{
 			shootCounter++;
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && shootCounter >= 8)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && shootCounter >= 8)
 		{
 			playerShoot.SetBulletPosition(player.GetPlayerCentre().x - 56.0f, player.GetPlayerCentre().y - 20.0f);
 			projectiles.push_back(Bullet(playerShoot));
@@ -178,12 +193,19 @@ int main()
 		}
 		for (int i = 0; i < projectiles.size(); i++)
 		{
+			OverHeat++;
+			if (OverHeat >= 50)
+			{
+				OverHeat = 0;
+				Over = false;
+			}
 			projectiles[i].MoveBullets(0.0f, -10.f);
 			if (projectiles[i].BulletPosition().y < 0)
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}
 		}
+		
 		// Enemies
 		if (respawn < 70)
 		{
@@ -282,10 +304,16 @@ int main()
 				}
 			}
 		}
-
-
+		animation_meteors.Update(0, deltaTime);
+		animation_enemy.Update(0, deltaTime );
 		window.clear(sf::Color::Black);
-		window.draw(Back);
+		for (int i = 0; i < 10; i++)
+		{
+			Star01[i].setTextureRect(animation_meteors.uvRect);
+			window.draw(Star01[i]);
+
+		}
+		//window.draw(Back);
 		player.Draw(window);
 		window.draw(Score);
 		window.draw(Count);
@@ -295,6 +323,7 @@ int main()
 		}
 		for (int i = 0; i < enemies.size(); i++)
 		{
+			enemies[i].setTextureRect(animation_enemy.uvRect);
 			window.draw(enemies[i]);
 		}
 		player.DrawHp(window);
@@ -307,11 +336,8 @@ int main()
 			window.draw(Score);
 			window.draw(Count);
 		}
-		// GUESS WHAT IT'S ALSO DINESH WORK
-		for (int i = 0; i < 10; i++)
-		{
-			window.draw(Star01[i]);
-		}
+		// GUESS WHAT IT'S ALSO DINESH WORK // So evil of you to mention ;/
+		
 		window.display();
 	}
 }

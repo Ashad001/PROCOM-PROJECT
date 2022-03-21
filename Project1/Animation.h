@@ -6,6 +6,7 @@ private:
 	sf::Vector2u currentImage;
 	float TotalTime;
 	float switchTime;
+
 public:
 	sf::IntRect uvRect;
 	Animation(sf::Texture* i_Tex, sf::Vector2u ImageCnt, float SwitchTm);

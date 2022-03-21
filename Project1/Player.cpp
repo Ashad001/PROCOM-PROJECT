@@ -89,7 +89,12 @@ void Player::SetHpBar(sf::RenderWindow &i_window)
 	{
 		HPBar.setPosition(i_window.getSize().x - HPBar.getSize().x - 370, HPBar.getPosition().y);
 	}
+	if (HP - 1 < MaxHP / 2)
+	{
+		HPBar.setFillColor(sf::Color(200 + (HP * 10), 0, 30));
+	}
 }
+
 
 sf::FloatRect Player::GetGlobalBounds()
 {
