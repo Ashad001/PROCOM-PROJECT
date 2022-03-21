@@ -33,8 +33,17 @@ int main()
 	sf::Sprite Star01[10];
 	Animation animation_meteors(&Star01Pic, sf::Vector2u(4, 1), 400);
 	
-	float deltaTime = 0.0f;
+	sf::Texture Star02Pic;
+	if (!Star02Pic.loadFromFile("Star02.png"))
+	{
+		cout << "Error! unable to load background star" << endl;
+	}
+	sf::Sprite Star02;
+	vector<sf::Sprite> stars;
+	Star02.setTexture(Star02Pic);
 
+	float deltaTime = 0.0f;
+	
 	for (int i = 0; i < 10; i++)
 	{
 		Star01[i].setTexture(Star01Pic);
@@ -90,12 +99,12 @@ int main()
 
 	// Enemies 
 	sf::Texture EnemyTexture;
-	EnemyTexture.loadFromFile("Enemy2.png");
+	EnemyTexture.loadFromFile("Enemy4.png");
 	sf::Sprite enemy(EnemyTexture);
 	sf::Vector2u EnemySize = EnemyTexture.getSize();
-	enemy.setScale(0.7f, 0.7f);
+	enemy.setScale(1.f, 1.f);
 	vector<sf::Sprite> enemies;
-	Animation animation_enemy(&EnemyTexture, sf::Vector2u(3,1), 300);
+	Animation animation_enemy(&EnemyTexture, sf::Vector2u(3,2), 300);
 
 
 
@@ -138,12 +147,13 @@ int main()
 	int hitcount = 0;
 	int hit = 0;
 	float enemy_pos_x = 0.f, enemy_pos_y = 0.f;
-	string Power = "11111222233";
+	string Power = "1213121213123";
 	int powerCounter = 0;
 	int kill;
 	int OverHeat = 0; // Yeah I am Evil ;)
 	bool Over = true;
-
+	int dead = 0;
+	int StarCount = 0;
 	while (window.isOpen())
 	{
 		deltaTime = clock01.restart().asMilliseconds();
@@ -193,19 +203,26 @@ int main()
 		}
 		for (int i = 0; i < projectiles.size(); i++)
 		{
-			OverHeat++;
-			if (OverHeat >= 50)
-			{
-				OverHeat = 0;
-				Over = false;
-			}
 			projectiles[i].MoveBullets(0.0f, -10.f);
 			if (projectiles[i].BulletPosition().y < 0)
 			{
 				projectiles.erase(projectiles.begin() + i);
 			}
 		}
-		
+		//Stars in background
+		if (StarCount < 10)
+		{
+			StarCount++;
+		}
+		if (StarCount >= 10)
+		{
+			StarCount = 0;
+			Star02.setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+			Star02.setPosition((rand() % (int)(window.getSize().x - 330)), 0.0f);
+			stars.push_back(sf::Sprite(Star02));
+		}
+
+
 		// Enemies
 		if (respawn < 70)
 		{
@@ -234,19 +251,23 @@ int main()
 			enemy.setPosition((rand() % (int)(window.getSize().x - EnemySize.x * 2 - 330)), 0.0f);
 			enemies.push_back(sf::Sprite(enemy));
 		}
+		for (int i = 0; i < stars.size(); i++)
+		{
+			stars[i].move(0.0f, 0.8f + float(killCount / 100.0f));
+		}
 		for (int i = 0; i < enemies.size(); i++)
 		{
 			if (enemies[i].getColor() == sf::Color::Yellow)
 			{
-				enemies[i].move(0.0f, 0.8f);
+				enemies[i].move(0.0f, 0.8f + float(killCount / 150.0f));
 			}
 			else if (enemies[i].getColor() == sf::Color::Green)
 			{
-				enemies[i].move(0.0f, 0.5f);
+				enemies[i].move(0.0f, 0.5f + float(killCount / 250.0f));
 			}
 			else if (enemies[i].getColor() == sf::Color::Red)
 			{
-				enemies[i].move(0.0f, 0.3f);
+				enemies[i].move(0.0f, 0.3f + float(killCount / 350.0f));
 			}
 			if (enemies[i].getPosition().y <= 0)
 			{
@@ -296,24 +317,31 @@ int main()
 					if (hitcount >= hit)
 					{
 						killCount += kill;
-						enemies.erase(enemies.begin() + i);
+						dead = i;
 						hitcount = 0;
+						enemies.erase(enemies.begin() + i);
 					}
+
 					projectiles.erase(projectiles.begin() + j);
 					break;
 				}
 			}
 		}
+		
+		animation_enemy.Update(0, deltaTime);
 		animation_meteors.Update(0, deltaTime);
-		animation_enemy.Update(0, deltaTime );
+
 		window.clear(sf::Color::Black);
+		for (int i = 0; i < stars.size(); i++)
+		{
+			window.draw(stars[i]);
+		}
 		for (int i = 0; i < 10; i++)
 		{
 			Star01[i].setTextureRect(animation_meteors.uvRect);
 			window.draw(Star01[i]);
-
 		}
-		//window.draw(Back);
+		
 		player.Draw(window);
 		window.draw(Score);
 		window.draw(Count);
@@ -336,7 +364,6 @@ int main()
 			window.draw(Score);
 			window.draw(Count);
 		}
-		// GUESS WHAT IT'S ALSO DINESH WORK // So evil of you to mention ;/
 		
 		window.display();
 	}

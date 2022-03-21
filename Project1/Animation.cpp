@@ -25,6 +25,6 @@ void Animation::Update(int row, float Deltatime)
 			currentImage.x = 0;
 		}
 	}
-	uvRect.left = currentImage.x * uvRect.width;
-	uvRect.top = currentImage.y * uvRect.height;
+	uvRect.left = currentImage.x * abs(uvRect.width);
+	uvRect.top = currentImage.y * abs(uvRect.height);
 }

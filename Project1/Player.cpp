@@ -6,6 +6,7 @@ using namespace std;
 
 Player::Player(sf::RenderWindow& i_window, sf::Texture* tex, int MaxHp = 10)
 {
+	//Bullet b = new Bullet();
 	this->player_texture = tex;
 	this->player.setTexture(*tex);
 	this->MaxHP = MaxHp;
