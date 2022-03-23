@@ -513,7 +513,7 @@ int main()
 					Restart.setPosition(Restart.getPosition().x, Restart.getPosition().y - 5);
 					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
-						player.SetHP(player.GetMaxHp());
+						player.SetPlayer(window, &PlayerTexture, player.GetMaxHp());
 						shootCounter = 0;
 						respawn = 0;
 						hitcount = 0;

@@ -10,6 +10,7 @@ private:
 	sf::RectangleShape bullet_in;
 public:
 	Player(sf::RenderWindow &i_window,sf::Texture *tex , int Maxhp);
+	void SetPlayer(sf::RenderWindow& i_window, sf::Texture* tex, int max);
 	sf::Vector2u GetPlayerSize();
 	sf::Vector2f GetPlayerCentre();
 	sf::Vector2f GetPlayerPosition();
