@@ -15,6 +15,7 @@ public:
 	sf::Vector2f GetPlayerPosition();
 	sf::FloatRect GetGlobalBounds();
 	void SetPlayerPosition(float x, float y);
+	void SetPlayerInitialPosition(sf::RenderWindow& i_window, sf::Texture* tex);
 	void MovePLayer(sf::RenderWindow &i_window, float deltaTime);
 	void SetHpBar(sf::RenderWindow &i_window);
 	void Shoot(sf::RenderWindow& i_window);
@@ -23,9 +24,8 @@ public:
 	void DrawHp(sf::RenderWindow& i_window);
 	int GetHp();
 	void SetHP(int x);
-	void SetEnemyHp(int x);
-	int GetEnemyHp();
-	
+	int GetMaxHp();
+	void SetTextureRect(sf::IntRect &i_body);
 
 };
 

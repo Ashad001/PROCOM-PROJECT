@@ -15,7 +15,6 @@ int main()
 	int Is_Game_Start = 0;
 	int startGame = 0;
 	int Is_Game_Pause = 0;
-
 	//Window
 	srand(time(NULL));
 	//sf::RenderWindow window(sf::VideoMode(700, 700), "Game");
@@ -67,11 +66,25 @@ int main()
 	Quit.setOrigin(Quit.getGlobalBounds().width / 2.f, Quit.getGlobalBounds().height / 2.f);
 	Quit.setStyle(sf::Text::Bold);
 
+	sf::Text Restart;
+	Restart.setFont(TitleFont);
+	Restart.setString("PLAY AGAIN");
+	Restart.setCharacterSize(MainScreen.getSize().y / 20.0);
+	Restart.setOrigin(Restart.getGlobalBounds().width / 2.f, Restart.getGlobalBounds().height / 2.f);
+	Restart.setStyle(sf::Text::Bold);
+
+
 	sf::SoundBuffer buffer;	
 	buffer.loadFromFile("shoot.wav");
 	sf::Sound Shoot;
 	Shoot.setBuffer(buffer);
-	Shoot.setVolume(50.f);
+	Shoot.setVolume(20.f);
+
+	sf::SoundBuffer buffer_Select;
+	buffer_Select.loadFromFile("Select.wav");
+	sf::Sound Select;
+	Select.setBuffer(buffer_Select);
+	Select.setVolume(20.f);
 
 
 	// DINESH WORK
@@ -177,7 +190,7 @@ int main()
 	Score.setFont(TitleFont);
 	Score.setString("SCORE");
 	Score.setCharacterSize(MainScreen.getSize().y / 25.0);
-	Score.setPosition(window.getSize().x - 210, 200);
+	Score.setPosition(window.getSize().x - 230, 200);
 	Score.setFillColor(sf::Color::White);
 	Score.setOutlineThickness(3);
 	Score.setOutlineColor(sf::Color::Blue);
@@ -202,8 +215,6 @@ int main()
 	string Power = "1213121213123";
 	int powerCounter = 0;
 	int kill;
-	int OverHeat = 0; // Yeah I am Evil ;)
-	bool Over = true;
 	int dead = 0;
 	int StarCount = 0;
 
@@ -213,7 +224,7 @@ int main()
 	{
 		Pause.setFillColor(sf::Color::White);
 		Pause.setOutlineColor(sf::Color::Blue);
-
+		Restart.setFillColor(sf::Color::White);
 		GameTitle.setFillColor(sf::Color::White);
 		Start.setFillColor(sf::Color::White);
 		Quit.setFillColor(sf::Color::White);
@@ -273,18 +284,19 @@ int main()
 		if (Is_Game_Pause == 0)
 		{
 			player.MovePLayer(window, deltaTime);
-			if (shootCounter < 8)
+			if (shootCounter < 12)
 			{
 				shootCounter++;
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && shootCounter >= 8)
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && shootCounter >= 12)
 			{
 				playerShoot.SetBulletPosition(player.GetPlayerCentre().x - 56.0f, player.GetPlayerCentre().y - 20.0f);
 				projectiles.push_back(Bullet(playerShoot));
 				playerShoot.SetBulletPosition(player.GetPlayerCentre().x + 34.0f, player.GetPlayerCentre().y - 20.0f);
 				projectiles.push_back(Bullet(playerShoot));
+				
 				Shoot.play();
-
+				
 				shootCounter = 0;
 			}
 			for (int i = 0; i < projectiles.size(); i++)
@@ -343,7 +355,7 @@ int main()
 			for (int i = 0; i < stars.size(); i++)
 			{
 				stars[i].move(0.0f, 0.8f + float(killCount / 100.0f));
-				if (stars[i].getPosition().y > window.getPosition().y)
+				if (stars[i].getPosition().y > window.getSize().y)
 				{
 					stars.erase(stars.begin() + i);
 				}
@@ -466,14 +478,78 @@ int main()
 			player.DrawHp(window);
 			if (player.GetHp() <= 0)
 			{
-				window.clear(sf::Color::Black);
-				window.draw(txt);
+				for (int i = 0; i < enemies.size(); i++)
+				{
+					enemies.erase(enemies.begin() + i);
+				}
+				for (int i = 0; i < projectiles.size(); i++)
+				{
+					projectiles.erase(projectiles.begin() + i);
+				}
+				for (int i = 0; i < stars.size(); i++)
+				{
+					stars.erase(stars.begin() + i);
+				}
+				
+
+
 				Score.setPosition(window.getSize().x / 2 - 50, window.getSize().y / 2);
 				Count.setPosition(window.getSize().x / 2 - 25, window.getSize().y / 2 + 50);
+				GameTitle.setPosition(MainScreen.getPosition().x + MainScreen.getSize().x / 2.0, MainScreen.getPosition().y + MainScreen.getSize().y / 2.0);
+				Picture0.setPosition(MainScreen.getPosition().x + MainScreen.getSize().x / 2, MainScreen.getPosition().y + MainScreen.getSize().y / 2);
+				Start.setPosition(MainScreen.getPosition().x + MainScreen.getSize().x / 2.0, MainScreen.getPosition().y + MainScreen.getSize().y / 2.0);
+				Quit.setPosition(MainScreen.getSize().x / 2.f, MainScreen.getSize().y / 2 + 200);
+				Restart.setPosition(MainScreen.getSize().x / 2.f, MainScreen.getSize().y / 2 + 150.f);
+
+
+				if (!(Restart.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))) || (Quit.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))))
+				{
+					Select.play();
+				}
+			
+				if (Restart.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+				{
+					Restart.setFillColor(sf::Color::Red);
+					Restart.setPosition(Restart.getPosition().x, Restart.getPosition().y - 5);
+					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+					{
+						player.SetHP(player.GetMaxHp());
+						shootCounter = 0;
+						respawn = 0;
+						hitcount = 0;
+						hit = 0;
+						powerCounter = 0;
+						kill = 0;
+						dead = 0;
+						StarCount = 0;
+						killCount = 0;
+						Score.setPosition(window.getSize().x - 230, 200);
+						Count.setPosition(window.getSize().x - 180, 250);
+						player.SetPlayerInitialPosition(window, &PlayerTexture);
+						killCount = 0;
+						Power = "1213121213123";
+
+						startGame = 0;
+					}
+				}
+				
+
+				if (Quit.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+				{
+					Quit.setFillColor(sf::Color::Red);
+					Quit.setPosition(Quit.getPosition().x, Quit.getPosition().y - 5);
+					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+					{
+						window.close();
+					}
+				}
+				window.clear(sf::Color::Black);
+				window.draw(txt);
 				window.draw(Score);
 				window.draw(Count);
+				window.draw(Quit);
+				window.draw(Restart);
 			}
-			window.draw(Pause);
 		}
 		else
 		{
@@ -482,9 +558,15 @@ int main()
 			Start.setPosition(MainScreen.getPosition().x + MainScreen.getSize().x / 2.0, MainScreen.getPosition().y + MainScreen.getSize().y / 2.0);
 			Quit.setPosition(MainScreen.getPosition().x + MainScreen.getSize().x / 2.0, MainScreen.getPosition().y + MainScreen.getSize().y / 2.0 + GameTitle.getGlobalBounds().height + Start.getGlobalBounds().height + Quit.getGlobalBounds().height);
 
+			if (!(Start.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))) || Quit.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))))
+			{
+				Select.play();
+			}
+
 			if (Start.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
 			{
 				Start.setFillColor(sf::Color::Red);
+				Start.setPosition(Start.getPosition().x, Start.getPosition().y - 5);
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					startGame = 1;
@@ -493,6 +575,7 @@ int main()
 			else if (Quit.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
 			{
 				Quit.setFillColor(sf::Color::Red);
+				Quit.setPosition(Quit.getPosition().x, Quit.getPosition().y - 5);
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					window.close();

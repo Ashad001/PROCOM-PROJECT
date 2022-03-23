@@ -11,9 +11,14 @@ Player::Player(sf::RenderWindow& i_window, sf::Texture* tex, int MaxHp = 10)
 	this->player.setTexture(*tex);
 	this->MaxHP = MaxHp;
 	this->HP = this->MaxHP;
+	player.setScale(2.5f, 2);
 	HPBar.setFillColor(sf::Color::Blue);
 	HPBar.setSize(sf::Vector2f(HP * 5.0f, 7.0f));
 	HPBar.setPosition(player.getPosition().x + 50, player.getPosition().y + 90);
+	player.setPosition(i_window.getSize().x / 3, i_window.getSize().y - player_texture->getSize().y / 2 - 100);
+}
+void Player::SetPlayerInitialPosition(sf::RenderWindow &i_window, sf::Texture *tex)
+{
 	player.setPosition(i_window.getSize().x / 3, i_window.getSize().y - player_texture->getSize().y / 2 - 100);
 }
 
@@ -72,6 +77,7 @@ void Player::MovePLayer(sf::RenderWindow &i_window , float deltaTime)
 		player.setPosition(player.getPosition().x,i_window.getSize().y - 150);
 	}
 	
+	
 
 
 	SetHpBar(i_window);
@@ -119,7 +125,10 @@ void Player::DrawHp(sf::RenderWindow& i_window)
 {
 	i_window.draw(HPBar);
 }
-
+void Player::SetTextureRect(sf::IntRect &i_body)
+{
+	player.setTextureRect(i_body);
+}
 
 int Player::GetHp()
 {
@@ -131,4 +140,10 @@ void Player::SetHP(int x)
 {
 	this->HP = x;
 }
+
+int Player::GetMaxHp()
+{
+	return MaxHP;
+}
+
 
