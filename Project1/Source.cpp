@@ -74,6 +74,7 @@ int main()
 	Restart.setStyle(sf::Text::Bold);
 
 
+
 	sf::SoundBuffer buffer;	
 	buffer.loadFromFile("shoot.wav");
 	sf::Sound Shoot;
@@ -85,6 +86,7 @@ int main()
 	sf::Sound Select;
 	Select.setBuffer(buffer_Select);
 	Select.setVolume(20.f);
+
 
 
 	// DINESH WORK
@@ -171,7 +173,21 @@ int main()
 	vector<sf::Sprite> enemies;
 	Animation animation_enemy(&EnemyTexture, sf::Vector2u(3, 2), 300);
 
+	// Powerups
+	sf::Texture HeartTexture;
+	HeartTexture.loadFromFile("Heart.png");
+	sf::Sprite Heart;
+	Heart.setTexture(HeartTexture);
+	vector< sf::Sprite> Hearts;
+	Animation animaion_hearts(&HeartTexture, sf::Vector2u(4,1),100);
 
+	sf::Texture AmnoTexture;
+	AmnoTexture.loadFromFile("Amno.png");
+	sf::Sprite Amno;
+	Amno.setTexture(AmnoTexture);
+	Amno.setScale(2.f, 2.f);
+	vector<sf::Sprite> Amnos;
+	Animation animation_amno(&AmnoTexture, sf::Vector2u(3,1), 100);
 
 	// GameOver
 	sf::Font font;
@@ -212,13 +228,13 @@ int main()
 	int hitcount = 0;
 	int hit = 0;
 	float enemy_pos_x = 0.f, enemy_pos_y = 0.f;
-	string Power = "1213121213123";
+	string Power = "1212121212333451";
 	int powerCounter = 0;
 	int kill;
-	int dead = 0;
+	int dead1= -1, dead2 = -1;
 	int StarCount = 0;
-
-
+	int Heart_Move = 0;
+	int bullet_strength = 1;
 
 	while (window.isOpen())
 	{
@@ -279,6 +295,7 @@ int main()
 			if (evnt.type == sf::Event::Resized)
 			{
 			}
+			
 		}
 
 		if (Is_Game_Pause == 0)
@@ -341,6 +358,14 @@ int main()
 				{
 					enemy.setColor(sf::Color::Red);
 				}
+				else if (Power[powerCounter] == '4')
+				{
+					enemy.setColor(sf::Color::Cyan);
+				}
+				else if (Power[powerCounter] == '5')
+				{
+					enemy.setColor(sf::Color::Magenta);
+				}
 				powerCounter++;
 				if (powerCounter >= Power.size() - 1)
 				{
@@ -375,12 +400,21 @@ int main()
 				{
 					enemies[i].move(0.0f, 0.3f + float(killCount / 350.0f));
 				}
+				else if (enemies[i].getColor() == sf::Color::Cyan)
+				{
+					enemies[i].move(0.0f, 0.9f + float(killCount / 150.0f));
+				}
+				else if (enemies[i].getColor() == sf::Color::Magenta)
+				{
+					enemies[i].move(0.0f, 0.9f + float(killCount / 150.0f));
+				}
 				if (enemies[i].getPosition().y <= 0)
 				{
 					enemies.erase(enemies.begin() + i);
 				}
 				if (enemies[i].getPosition().y + 50 > window.getSize().y)
 				{
+					enemies.erase(enemies.begin() + i);
 					player.SetHP(0);
 				}
 			}
@@ -403,7 +437,7 @@ int main()
 				{
 					if (enemies[i].getGlobalBounds().intersects(projectiles[j].BulletGlobalBounds()))
 					{
-						hitcount++;
+						hitcount+=bullet_strength;
 						if (enemies[i].getColor() == sf::Color::Yellow)
 						{
 							hit = 2;
@@ -411,29 +445,46 @@ int main()
 						}
 						else if (enemies[i].getColor() == sf::Color::Green)
 						{
-							hit = 5;
+							hit = 4;
 							kill = 2;
 						}
 						else if (enemies[i].getColor() == sf::Color::Red)
 						{
-							hit = 8;
+							hit = 7;
 							kill = 4;
-
+						}
+						else if (enemies[i].getColor() == sf::Color::Cyan)
+						{
+							hit = 2;
+							kill = 5;
+						}
+						else if (enemies[i].getColor() == sf::Color::Magenta)
+						{
+							hit = 2;
+							kill = 5;
 						}
 						if (hitcount >= hit)
 						{
 							killCount += kill;
-							dead = i;
 							hitcount = 0;
-							/*sf::Clock a;
-							sf::Time aa = sf::seconds(1);
-							while (a.getElapsedTime().asSeconds() <= aa.asSeconds())
+
+							if (enemies[i].getColor() == sf::Color::Cyan)
 							{
-								animation_enemy.Update(1, deltaTime);
-								window.draw(enemies[i]);
+								dead1++;
+								Heart.setPosition(enemies[i].getPosition());
+								enemies.erase(enemies.begin() + i);
 							}
-							a.restart();*/
-							enemies.erase(enemies.begin() + i);
+							else if (enemies[i].getColor() == sf::Color::Magenta)
+							{
+								dead2++;
+								Amno.setPosition(enemies[i].getPosition());
+								enemies.erase(enemies.begin() + i);
+							}
+							else
+							{
+								enemies.erase(enemies.begin() + i);
+							}
+							
 						}
 
 						projectiles.erase(projectiles.begin() + j);
@@ -441,10 +492,52 @@ int main()
 					}
 				}
 			}
+			if (dead1 != -1)
+			{
+				Hearts.push_back(sf::Sprite(Heart));
+				dead1 = -1;
+			}
+			for (int i = 0; i < Hearts.size(); i++)
+			{
+				Hearts[i].move(0.0f, 0.9f + float(killCount / 100.f));
+				if (Hearts[i].getPosition().y <= 0 || Hearts[i].getPosition().y + 50 > window.getSize().y)
+				{
+					Hearts.erase(Hearts.begin() + i);
+				}
+				if (player.GetGlobalBounds().intersects(Hearts[i].getGlobalBounds()))
+				{
+					Hearts.erase(Hearts.begin() + i);
+					player.SetHP(player.GetMaxHp());
+				}
+			}
+			if (dead2 != -1)
+			{
+				Amnos.push_back(sf::Sprite(Amno));
+				dead2 = -1;
+			}
+			for (int i = 0; i < Amnos.size(); i++)
+			{
+				Amnos[i].move(0.0f, 0.9f + float(killCount / 100.f));
+				if (Amnos[i].getPosition().y <= 0 || Amnos[i].getPosition().y + 50 > window.getSize().y)
+				{
+					Amnos.erase(Amnos.begin() + i);
+				}
+				if (player.GetGlobalBounds().intersects(Amnos[i].getGlobalBounds()))
+				{
+					bullet_strength++;
+					Amnos.erase(Amnos.begin() + i);
+				}
+			}
+			
+		
+			//animations
 			animation_player.Update(0, deltaTime);
 			animation_enemy.Update(0, deltaTime);
 			animation_meteors.Update(0, deltaTime);
+			animaion_hearts.Update(0, deltaTime);
+			animation_amno.Update(0, deltaTime);
 		}
+
 		window.clear(sf::Color::Black);
 		if (Is_Game_Start == 1)
 		{
@@ -461,7 +554,16 @@ int main()
 			player.SetTextureRect(animation_player.uvRect);
 			player.Draw(window);
 			window.draw(Score);
-
+			for (int i = 0; i < Hearts.size(); i++)
+			{
+				Hearts[i].setTextureRect(animaion_hearts.uvRect);
+				window.draw(Hearts[i]);
+			}
+			for (int i = 0; i < Amnos.size(); i++)
+			{
+				Amnos[i].setTextureRect(animation_amno.uvRect);
+				window.draw(Amnos[i]);
+			}
 			window.draw(Count);
 			for (int i = 0; i < projectiles.size(); i++)
 			{
@@ -520,14 +622,16 @@ int main()
 						hit = 0;
 						powerCounter = 0;
 						kill = 0;
-						dead = 0;
+						dead1 = -1;
+						dead2 = -1;
 						StarCount = 0;
 						killCount = 0;
+						bullet_strength = 1;
 						Score.setPosition(window.getSize().x - 230, 200);
 						Count.setPosition(window.getSize().x - 180, 250);
 						player.SetPlayerInitialPosition(window, &PlayerTexture);
 						killCount = 0;
-						Power = "1213121213123";
+
 
 						startGame = 0;
 					}

@@ -156,6 +156,7 @@ void Player::SetHP(int x)
 
 int Player::GetMaxHp()
 {
+	HPBar.setFillColor(sf::Color::Blue);
 	return MaxHP;
 }
 
