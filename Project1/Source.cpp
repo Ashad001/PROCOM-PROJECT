@@ -499,11 +499,7 @@ int main()
 			}
 			for (int i = 0; i < Hearts.size(); i++)
 			{
-				Hearts[i].move(0.0f, 0.9f + float(killCount / 100.f));
-				if (Hearts[i].getPosition().y <= 0 || Hearts[i].getPosition().y + 50 > window.getSize().y)
-				{
-					Hearts.erase(Hearts.begin() + i);
-				}
+				Hearts[i].move(0.0f, 0.9f + float(killCount / 100.f));			
 				if (player.GetGlobalBounds().intersects(Hearts[i].getGlobalBounds()))
 				{
 					Hearts.erase(Hearts.begin() + i);
@@ -518,10 +514,6 @@ int main()
 			for (int i = 0; i < Amnos.size(); i++)
 			{
 				Amnos[i].move(0.0f, 0.9f + float(killCount / 100.f));
-				if (Amnos[i].getPosition().y <= 0 || Amnos[i].getPosition().y + 50 > window.getSize().y)
-				{
-					Amnos.erase(Amnos.begin() + i);
-				}
 				if (player.GetGlobalBounds().intersects(Amnos[i].getGlobalBounds()))
 				{
 					bullet_strength++;
@@ -631,7 +623,6 @@ int main()
 						Count.setPosition(window.getSize().x - 180, 250);
 						player.SetPlayerInitialPosition(window, &PlayerTexture);
 						killCount = 0;
-
 
 						startGame = 0;
 					}
